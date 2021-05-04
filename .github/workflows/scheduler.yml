@@ -1,0 +1,19 @@
+name: Weekly Release Check
+on:
+  schedule:
+    - cron: "0 14 * * 1"
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Run
+        run: make run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
