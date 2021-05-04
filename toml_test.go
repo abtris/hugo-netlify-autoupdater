@@ -5,6 +5,7 @@ import (
 )
 
 func TestParseConfig(t *testing.T) {
+	t.Parallel()
 	expected := "netlify.toml"
 
 	config, err := parseConfigFile("fixtures/config.toml")
@@ -20,6 +21,7 @@ func TestParseConfig(t *testing.T) {
 }
 
 func TestParseNetlifyConfig(t *testing.T) {
+	t.Parallel()
 	expected := "0.83.1"
 
 	config, err := parseNetlifyConfFile("fixtures/netlify.toml")
@@ -34,6 +36,7 @@ func TestParseNetlifyConfig(t *testing.T) {
 }
 
 func TestParseNetlifyConfigDirect(t *testing.T) {
+	t.Parallel()
 	expected := "0.83.1"
 
 	content := `

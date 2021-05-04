@@ -9,6 +9,7 @@ import (
 
 // Expecting test fail after new release (remove later)
 func TestGetCurrentHugoVersion(t *testing.T) {
+	t.Parallel()
 	expected := "0.83.1"
 
 	var client *github.Client
@@ -26,6 +27,7 @@ func TestGetCurrentHugoVersion(t *testing.T) {
 }
 
 func TestGetCurrentDeployedVersion(t *testing.T) {
+	t.Parallel()
 	expected := "0.83.1"
 
 	var client *github.Client
@@ -44,6 +46,7 @@ func TestGetCurrentDeployedVersion(t *testing.T) {
 }
 
 func TestIsNewVersion(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name           string
 		hugoVersion    string
@@ -65,6 +68,7 @@ func TestIsNewVersion(t *testing.T) {
 }
 
 func TestGetRepoPath(t *testing.T) {
+	t.Parallel()
 	input := "owner/repo"
 	expectedOwner := "owner"
 	expectedRepo := "repo"
