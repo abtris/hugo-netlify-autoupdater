@@ -9,7 +9,7 @@ import (
 
 // Expecting test fail after new release (remove later)
 func TestGetCurrentHugoVersion(t *testing.T) {
-	expected := "v0.83.1"
+	expected := "0.83.1"
 
 	var client *github.Client
 	var ctx = context.Background()

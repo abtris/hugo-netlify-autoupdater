@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/google/go-github/v35/github"
 )
@@ -12,7 +13,7 @@ func getCurrentHugoVersion(ctx context.Context, client *github.Client) (string, 
 	if err != nil {
 		fmt.Println(err)
 	}
-	return release.GetTagName(), nil
+	return strings.TrimPrefix(release.GetTagName(), "v"), nil
 }
 
 func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, repo, path string) (string, error) {
