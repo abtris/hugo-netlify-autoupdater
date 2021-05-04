@@ -47,8 +47,27 @@ func main() {
 		if isNewVersion(hugoVersion, deployVersion) {
 			updatedContent := updateVersion(hugoVersion, deployContent)
 			fmt.Println(updatedContent)
-			// preparePR (getRef, done)
-			// createPR (done)
+			commitBranch := getCommitBranch(hugoVersion)
+			ref, newBranch, err := getRef(ctx, client, owner, repo, commitBranch)
+			if err != nil {
+				log.Fatalf("Error in getRef %v", err)
+			}
+			if newBranch {
+				tree, err := getTree(ctx, client, owner, repo, ref, "netlify.toml", updatedContent)
+				if err != nil {
+					log.Fatalf("Error in getTree %v", err)
+				}
+				errCommit := pushCommit(ctx, client, owner, repo, ref, tree, hugoVersion)
+				if errCommit != nil {
+					log.Fatalf("Error in pushCommit %v", errCommit)
+				}
+				errPR := createPullRequest(ctx, client, owner, repo, hugoVersion, releaseUrl, commitBranch)
+				if errPR != nil {
+					log.Fatalf("Error in createPullRequest %v", errPR)
+				}
+			} else {
+				fmt.Printf("PR branch (%s) already exists.\n", commitBranch)
+			}
 		} else {
 			fmt.Printf("No new version in %s/%s (current: %s)\n", owner, repo, deployVersion)
 		}
