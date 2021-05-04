@@ -29,11 +29,12 @@ func main() {
 	tc := oauth2.NewClient(ctx, ts)
 	client = github.NewClient(tc)
 	// getCurrentHugoVersion
-	hugoVersion, err := getCurrentHugoVersion(ctx, client)
+	hugoVersion, releaseUrl, err := getCurrentHugoVersion(ctx, client)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(hugoVersion)
+	fmt.Println(releaseUrl)
 	// for _, repository := range conf.TargetRepository {}
 	// getCurrentDeployedVersion for all config.targetRepos (done)
 	// compareVersion (done)

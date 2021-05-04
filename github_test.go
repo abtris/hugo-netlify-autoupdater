@@ -16,7 +16,7 @@ func TestGetCurrentHugoVersion(t *testing.T) {
 
 	client = github.NewClient(nil)
 
-	real, err := getCurrentHugoVersion(ctx, client)
+	real, _, err := getCurrentHugoVersion(ctx, client)
 	if err != nil {
 		t.Fatalf("Get error %v", err)
 	}
