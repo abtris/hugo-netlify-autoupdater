@@ -35,7 +35,7 @@ func TestGetCurrentDeployedVersion(t *testing.T) {
 
 	client = github.NewClient(nil)
 
-	real, err := getCurrentDeployedVersion(ctx, client, "abtris", "www.prskavec.net", "netlify.toml")
+	real, _, err := getCurrentDeployedVersion(ctx, client, "abtris", "www.prskavec.net", "netlify.toml")
 	if err != nil {
 		t.Fatalf("Get error %v", err)
 	}

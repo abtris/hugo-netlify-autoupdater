@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"regexp"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -12,12 +15,13 @@ type repository struct {
 }
 
 type config struct {
-	SourceRepoReleases string `toml:"source_repo_releases"`
-	TargetRepository   map[string]repository
+	SourceRepoReleases string       `toml:"source_repo_releases"`
+	TargetRepository   []repository `toml:"target_repos"`
 }
 
 type netlifyConfig struct {
-	Build netlifyBuild `toml:"build"`
+	Build   netlifyBuild `toml:"build"`
+	Context netlifyBuild `toml:"context"`
 }
 
 type netlifyBuild struct {
@@ -50,4 +54,15 @@ func parseNetlifyConf(content string) (netlifyConfig, error) {
 		return conf, err
 	}
 	return conf, nil
+}
+
+func updateVersion(hugoVersion, deployContent string) string {
+
+	regexp, err := regexp.Compile(`HUGO_VERSION = \"(\d+\.\d+\.\d+)\"`)
+	if err != nil {
+		fmt.Println(err)
+	}
+	replacement := fmt.Sprintf("HUGO_VERSION = \"%s\"", hugoVersion)
+
+	return regexp.ReplaceAllString(deployContent, replacement)
 }

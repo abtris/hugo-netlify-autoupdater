@@ -35,9 +35,22 @@ func main() {
 	}
 	fmt.Println(hugoVersion)
 	fmt.Println(releaseUrl)
-	// for _, repository := range conf.TargetRepository {}
-	// getCurrentDeployedVersion for all config.targetRepos (done)
-	// compareVersion (done)
-	// preparePR (getRef, done)
-	// createPR (done)
+
+	for _, repository := range conf.TargetRepository {
+		fmt.Printf("%s\n%s\n%s\n", repository.Repo, repository.TargetFile, repository.TargetVariable)
+		// getCurrentDeployedVersion for all config.targetRepos (done)
+		owner, repo := getRepoPath(repository.Repo)
+		deployVersion, deployContent, err := getCurrentDeployedVersion(ctx, client, owner, repo, repository.TargetFile)
+		if err != nil {
+			fmt.Printf("Error in %v", err)
+		}
+		if isNewVersion(hugoVersion, deployVersion) {
+			updatedContent := updateVersion(hugoVersion, deployContent)
+			fmt.Println(updatedContent)
+			// preparePR (getRef, done)
+			// createPR (done)
+		} else {
+			fmt.Printf("No new version in %s/%s (current: %s)\n", owner, repo, deployVersion)
+		}
+	}
 }

@@ -58,3 +58,27 @@ func TestParseNetlifyConfigDirect(t *testing.T) {
 	}
 
 }
+
+func TestReplaceVersion(t *testing.T) {
+	input := `
+[build]
+  command = "hugo --gc --minify -b $URL"
+
+[build.environment]
+  HUGO_VERSION = "0.1.1"
+  HUGO_ENABLEGITINFO = "true"`
+
+	expected := `
+[build]
+  command = "hugo --gc --minify -b $URL"
+
+[build.environment]
+  HUGO_VERSION = "0.83.1"
+  HUGO_ENABLEGITINFO = "true"`
+
+	real := updateVersion("0.83.1", input)
+
+	if real != expected {
+		t.Errorf("Expected %v and real %v)", expected, real)
+	}
+}

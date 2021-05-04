@@ -14,12 +14,12 @@ import (
 func isNewVersion(hugoVersion string, netlifyConfigVersion string) bool {
 	v1, err := version.NewVersion(hugoVersion)
 	if err != nil {
-		log.Printf("Error parsing version %s", hugoVersion)
+		log.Printf("Error parsing version \"%s\"", hugoVersion)
 		return false
 	}
 	v2, err := version.NewVersion(netlifyConfigVersion)
 	if err != nil {
-		log.Printf("Error parsing version %s", netlifyConfigVersion)
+		log.Printf("Error parsing version \"%s\"", netlifyConfigVersion)
 		return false
 	}
 
@@ -51,16 +51,19 @@ func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, r
 	return content, nil
 }
 
-func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner, repo, path string) (string, error) {
+func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner, repo, path string) (string, string, error) {
 	content, err := getCurrentDeployedFile(ctx, client, owner, repo, path)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	config, err := parseNetlifyConf(content)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return config.Build.BuildEnv.HugoVersion, nil
+	if len(config.Build.BuildEnv.HugoVersion) > 0 {
+		return config.Build.BuildEnv.HugoVersion, content, nil
+	}
+	return "", "", fmt.Errorf("Empty version")
 }
 
 func getCommitBranch(hugoVersion string) string {
@@ -112,6 +115,7 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string, 
 	// Attach the commit to the master branch.
 	ref.Object.SHA = newCommit.SHA
 	_, _, err = client.Git.UpdateRef(ctx, owner, repo, ref, false)
+
 	return err
 }
 
@@ -134,10 +138,12 @@ func createPullRequest(ctx context.Context, client *github.Client, owner, repo, 
 	}
 
 	fmt.Printf("PR created: %s\n", pr.GetHTMLURL())
+
 	return nil
 }
 
 func getRepoPath(path string) (owner, repo string) {
 	paths := strings.Split(path, "/")
+
 	return paths[0], paths[1]
 }

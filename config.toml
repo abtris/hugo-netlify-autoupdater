@@ -2,14 +2,14 @@
 # get tag_name from last release (not draft or prerelease)
 source_repo_releases = "gohugoio/hugo"
 # compare versions in toml configs and if newer exists create PR in repo
-[target_repos]
-  [target_repos.alfa]
-    repo = "abtris/www.prskavec.net"
-    target_file = "netlify.toml"
-    target_variable = "HUGO_VERSION"
-    branch = "master"
-  [target_repos.beta]
-    repo = "abtris/blog.prskavec.net-hugo"
-    target_file = "netlify.toml"
-    target_variable = "HUGO_VERSION"
-    branch = "master"
+
+[[target_repos]]
+  repo = "abtris/www.prskavec.net"
+  target_file = "netlify.toml"
+  target_variable = "HUGO_VERSION"
+  branch = "master"
+[[target_repos]]
+  repo = "abtris/blog.prskavec.net-hugo"
+  target_file = "netlify.toml"
+  target_variable = "HUGO_VERSION"
+  branch = "master"
