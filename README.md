@@ -1,8 +1,7 @@
 [![Build Status](https://github.com/abtris/hugo-netlify-autoupdater/actions/workflows/go.yaml/badge.svg)](https://github.com/abtris/hugo-netlify-autoupdater/actions)
 # Hugo Netlify Autoupdater
 
-- [ ] listen on event publish release `gohugoio/hugo`
-  - cron in 1st iteration
+- [x] cron for run
 - [x] compare current deployed version of Hugo in all blogs
 - [x] create PR's for update version
 - [ ] merge if all passed
