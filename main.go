@@ -15,9 +15,9 @@ func main() {
 	// ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	// tc := oauth2.NewClient(ctx, ts)
 	// client = github.NewClient(tc)
-	// getCurrentHugoVersion
-	// getCurrentDeployedVersion for all config.targetRepos
-	// compareVersion
+	// getCurrentHugoVersion (done)
+	// getCurrentDeployedVersion for all config.targetRepos (done)
+	// compareVersion (done)
 	// preparePR
 	// checkPRIfExists (don't create every day)
 	// createPR

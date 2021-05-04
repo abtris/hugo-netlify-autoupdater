@@ -3,10 +3,30 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/google/go-github/v35/github"
+	"github.com/hashicorp/go-version"
 )
+
+func isNewVersion(hugoVersion string, netlifyConfigVersion string) bool {
+	v1, err := version.NewVersion(hugoVersion)
+	if err != nil {
+		log.Printf("Error parsing version %s", hugoVersion)
+		return false
+	}
+	v2, err := version.NewVersion(netlifyConfigVersion)
+	if err != nil {
+		log.Printf("Error parsing version %s", netlifyConfigVersion)
+		return false
+	}
+
+	if v2.LessThan(v1) {
+		return true
+	}
+	return false
+}
 
 func getCurrentHugoVersion(ctx context.Context, client *github.Client) (string, error) {
 	release, _, err := client.Repositories.GetLatestRelease(ctx, "gohugoio", "hugo")

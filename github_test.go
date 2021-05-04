@@ -42,3 +42,24 @@ func TestGetCurrentDeployedVersion(t *testing.T) {
 		t.Errorf("Expected %v and real %v)", expected, real)
 	}
 }
+
+func TestIsNewVersion(t *testing.T) {
+	tests := []struct {
+		name           string
+		hugoVersion    string
+		netlifyVersion string
+		result         bool
+	}{
+		{name: "Equal", hugoVersion: "0.10.1", netlifyVersion: "0.10.1", result: false},
+		{name: "Lower", hugoVersion: "0.10.1", netlifyVersion: "0.10.2", result: false},
+		{name: "New", hugoVersion: "0.10.2", netlifyVersion: "0.10.1", result: true},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			result := isNewVersion(test.hugoVersion, test.netlifyVersion)
+			if result != test.result {
+				t.Errorf("Expected %v and real %v)", test.result, result)
+			}
+		})
+	}
+}
