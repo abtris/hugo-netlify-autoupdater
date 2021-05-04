@@ -63,3 +63,17 @@ func TestIsNewVersion(t *testing.T) {
 		})
 	}
 }
+
+func TestGetRepoPath(t *testing.T) {
+	input := "owner/repo"
+	expectedOwner := "owner"
+	expectedRepo := "repo"
+	owner, repo := getRepoPath(input)
+
+	if owner != expectedOwner {
+		t.Errorf("Expected %v and real %v)", expectedOwner, owner)
+	}
+	if repo != expectedRepo {
+		t.Errorf("Expected %v and real %v)", expectedRepo, repo)
+	}
+}

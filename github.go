@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/v35/github"
 	"github.com/hashicorp/go-version"
@@ -60,4 +61,83 @@ func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner
 		return "", err
 	}
 	return config.Build.BuildEnv.HugoVersion, nil
+}
+
+func getCommitBranch(hugoVersion string) string {
+	return fmt.Sprintf("updater/version-%s", hugoVersion)
+}
+
+func getRef(ctx context.Context, client *github.Client, owner, repo, commitBranch string) (ref *github.Reference, isNewBranch bool, err error) {
+	var baseRef *github.Reference
+	// if branch exists get back ref
+	if ref, _, err = client.Git.GetRef(ctx, owner, repo, "refs/heads/"+commitBranch); err == nil {
+		return ref, false, nil
+	}
+	// get base ref (master only supported now)
+	if baseRef, _, err = client.Git.GetRef(ctx, owner, repo, "refs/heads/master"); err != nil {
+		return nil, false, err
+	}
+	// create new branch
+	newRef := &github.Reference{Ref: github.String("refs/heads/" + commitBranch), Object: &github.GitObject{SHA: baseRef.Object.SHA}}
+	ref, _, err = client.Git.CreateRef(ctx, owner, repo, newRef)
+	return ref, true, err
+}
+
+func getTree(ctx context.Context, client *github.Client, owner, repo string, ref *github.Reference, filename, source string) (tree *github.Tree, err error) {
+	entries := []*github.TreeEntry{}
+	entries = append(entries, &github.TreeEntry{Path: github.String(filename), Type: github.String("blob"), Content: github.String(source), Mode: github.String("100644")})
+	tree, _, err = client.Git.CreateTree(ctx, owner, repo, *ref.Object.SHA, entries)
+	return tree, err
+}
+
+func pushCommit(ctx context.Context, client *github.Client, owner, repo string, ref *github.Reference, tree *github.Tree, hugoVersion string) (err error) {
+	parent, _, err := client.Repositories.GetCommit(ctx, owner, repo, *ref.Object.SHA)
+	if err != nil {
+		return err
+	}
+	// This is not always populated, but is needed.
+	parent.Commit.SHA = parent.SHA
+	commitMessage := fmt.Sprintf("fix(deps): Update Hugo to version %s", hugoVersion)
+	commiterName := "Updater-bot"
+	commiterEmail := "updater-bot@github.com"
+	// Create the commit using the tree.
+	date := time.Now()
+	author := &github.CommitAuthor{Date: &date, Name: &commiterName, Email: &commiterEmail}
+	commit := &github.Commit{Author: author, Message: &commitMessage, Tree: tree, Parents: []*github.Commit{parent.Commit}}
+	newCommit, _, err := client.Git.CreateCommit(ctx, owner, repo, commit)
+	if err != nil {
+		return err
+	}
+
+	// Attach the commit to the master branch.
+	ref.Object.SHA = newCommit.SHA
+	_, _, err = client.Git.UpdateRef(ctx, owner, repo, ref, false)
+	return err
+}
+
+func createPullRequest(ctx context.Context, client *github.Client, owner, repo, hugoVersion, commitBranch string) error {
+	prBranch := commitBranch
+	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
+	prDescription := fmt.Sprintf("%s", prSubject)
+	baseBranch := "master"
+	newPR := &github.NewPullRequest{
+		Title:               &prSubject,
+		Head:                &prBranch,
+		Base:                &baseBranch,
+		Body:                &prDescription,
+		MaintainerCanModify: github.Bool(true),
+	}
+
+	pr, _, err := client.PullRequests.Create(ctx, owner, repo, newPR)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("PR created: %s\n", pr.GetHTMLURL())
+	return nil
+}
+
+func getRepoPath(path string) (owner, repo string) {
+	paths := strings.Split(path, "/")
+	return paths[0], paths[1]
 }
