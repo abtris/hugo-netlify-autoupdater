@@ -63,7 +63,7 @@ func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner
 	if len(config.Build.BuildEnv.HugoVersion) > 0 {
 		return config.Build.BuildEnv.HugoVersion, content, nil
 	}
-	return "", "", fmt.Errorf("Empty version")
+	return "", "", fmt.Errorf("ERROR: Empty version")
 }
 
 func getCommitBranch(hugoVersion string) string {
