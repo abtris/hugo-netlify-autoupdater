@@ -37,10 +37,9 @@ func main() {
 	fmt.Println(releaseUrl)
 
 	for _, repository := range conf.TargetRepository {
-		fmt.Printf("%s\n%s\n%s\n", repository.Repo, repository.TargetFile, repository.TargetVariable)
 		// getCurrentDeployedVersion for all config.targetRepos (done)
 		owner, repo := getRepoPath(repository.Repo)
-		deployVersion, deployContent, err := getCurrentDeployedVersion(ctx, client, owner, repo, repository.TargetFile)
+		deployVersion, deployContent, err := getCurrentDeployedVersion(ctx, client, owner, repo, repository.TargetFile, repository.Branch)
 		if err != nil {
 			fmt.Printf("Error in %v", err)
 		}
@@ -48,7 +47,7 @@ func main() {
 			updatedContent := updateVersion(hugoVersion, deployContent)
 			fmt.Println(updatedContent)
 			commitBranch := getCommitBranch(hugoVersion)
-			ref, newBranch, err := getRef(ctx, client, owner, repo, commitBranch)
+			ref, newBranch, err := getRef(ctx, client, owner, repo, repository.Branch, commitBranch)
 			if err != nil {
 				log.Fatalf("Error in getRef %v", err)
 			}
@@ -61,7 +60,7 @@ func main() {
 				if errCommit != nil {
 					log.Fatalf("Error in pushCommit %v", errCommit)
 				}
-				errPR := createPullRequest(ctx, client, owner, repo, hugoVersion, releaseUrl, commitBranch)
+				errPR := createPullRequest(ctx, client, owner, repo, repository.Branch, hugoVersion, releaseUrl, commitBranch)
 				if errPR != nil {
 					log.Fatalf("Error in createPullRequest %v", errPR)
 				}

@@ -37,9 +37,9 @@ func getCurrentHugoVersion(ctx context.Context, client *github.Client) (string, 
 	return strings.TrimPrefix(release.GetTagName(), "v"), release.GetHTMLURL(), nil
 }
 
-func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, repo, path string) (string, error) {
+func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, repo, path, branch string) (string, error) {
 	file, _, _, err := client.Repositories.GetContents(ctx, owner, repo, path,
-		&github.RepositoryContentGetOptions{Ref: "master"},
+		&github.RepositoryContentGetOptions{Ref: branch},
 	)
 	if err != nil {
 		return "", err
@@ -51,8 +51,8 @@ func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, r
 	return content, nil
 }
 
-func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner, repo, path string) (string, string, error) {
-	content, err := getCurrentDeployedFile(ctx, client, owner, repo, path)
+func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner, repo, path, branch string) (string, string, error) {
+	content, err := getCurrentDeployedFile(ctx, client, owner, repo, path, branch)
 	if err != nil {
 		return "", "", err
 	}
@@ -70,14 +70,14 @@ func getCommitBranch(hugoVersion string) string {
 	return fmt.Sprintf("updater/version-%s", hugoVersion)
 }
 
-func getRef(ctx context.Context, client *github.Client, owner, repo, commitBranch string) (ref *github.Reference, isNewBranch bool, err error) {
+func getRef(ctx context.Context, client *github.Client, owner, repo, branch, commitBranch string) (ref *github.Reference, isNewBranch bool, err error) {
 	var baseRef *github.Reference
 	// if branch exists get back ref
 	if ref, _, err = client.Git.GetRef(ctx, owner, repo, "refs/heads/"+commitBranch); err == nil {
 		return ref, false, nil
 	}
 	// get base ref (master only supported now)
-	if baseRef, _, err = client.Git.GetRef(ctx, owner, repo, "refs/heads/master"); err != nil {
+	if baseRef, _, err = client.Git.GetRef(ctx, owner, repo, "refs/heads/"+branch); err != nil {
 		return nil, false, err
 	}
 	// create new branch
@@ -119,11 +119,11 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string, 
 	return err
 }
 
-func createPullRequest(ctx context.Context, client *github.Client, owner, repo, hugoVersion, releaseUrl, commitBranch string) error {
+func createPullRequest(ctx context.Context, client *github.Client, owner, repo, branch, hugoVersion, releaseUrl, commitBranch string) error {
 	prBranch := commitBranch
 	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
 	prDescription := fmt.Sprintf("%s\nMore details in %s", prSubject, releaseUrl)
-	baseBranch := "master"
+	baseBranch := branch
 	newPR := &github.NewPullRequest{
 		Title:               &prSubject,
 		Head:                &prBranch,
