@@ -8,7 +8,11 @@
 - [ ] merge if all passed
 - [ ] more settings move into config file
 
-## Config
+## Dependencies
+
+- [go-github library](https://github.com/google/go-github)
+- [toml library](https://github.com/BurntSushi/toml)
+- [go-version](https://github.com/hashicorp/go-version)
 
 ## Install
 
