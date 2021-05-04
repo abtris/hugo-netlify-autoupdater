@@ -32,7 +32,7 @@ func isNewVersion(hugoVersion string, netlifyConfigVersion string) bool {
 func getCurrentHugoVersion(ctx context.Context, client *github.Client) (string, string, error) {
 	release, _, err := client.Repositories.GetLatestRelease(ctx, "gohugoio", "hugo")
 	if err != nil {
-		fmt.Println(err)
+		log.Printf("Get latest release error %v", err)
 	}
 	return strings.TrimPrefix(release.GetTagName(), "v"), release.GetHTMLURL(), nil
 }

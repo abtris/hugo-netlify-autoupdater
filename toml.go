@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 
 	"github.com/BurntSushi/toml"
@@ -60,7 +61,7 @@ func updateVersion(hugoVersion, deployContent string) string {
 
 	regexp, err := regexp.Compile(`HUGO_VERSION = \"(\d+\.\d+\.\d+)\"`)
 	if err != nil {
-		fmt.Println(err)
+		log.Printf("Compile regexp error: %v", err)
 	}
 	replacement := fmt.Sprintf("HUGO_VERSION = \"%s\"", hugoVersion)
 
