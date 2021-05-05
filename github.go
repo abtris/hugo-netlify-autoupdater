@@ -37,7 +37,9 @@ func getCurrentHugoVersion(ctx context.Context, client *github.Client) (string, 
 	return strings.TrimPrefix(release.GetTagName(), "v"), release.GetHTMLURL(), nil
 }
 
-func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, repo, path, branch string) (string, error) {
+func getCurrentDeployedFile(ctx context.Context, client *github.Client,
+	owner, repo, path, branch string) (string, error) {
+
 	file, _, _, err := client.Repositories.GetContents(ctx, owner, repo, path,
 		&github.RepositoryContentGetOptions{Ref: branch},
 	)
@@ -51,7 +53,9 @@ func getCurrentDeployedFile(ctx context.Context, client *github.Client, owner, r
 	return content, nil
 }
 
-func getCurrentDeployedVersion(ctx context.Context, client *github.Client, owner, repo, path, branch string) (string, string, error) {
+func getCurrentDeployedVersion(ctx context.Context, client *github.Client,
+	owner, repo, path, branch string) (string, string, error) {
+
 	content, err := getCurrentDeployedFile(ctx, client, owner, repo, path, branch)
 	if err != nil {
 		return "", "", err
@@ -70,7 +74,10 @@ func getCommitBranch(hugoVersion string) string {
 	return fmt.Sprintf("updater/version-%s", hugoVersion)
 }
 
-func getRef(ctx context.Context, client *github.Client, owner, repo, branch, commitBranch string) (ref *github.Reference, isNewBranch bool, err error) {
+func getRef(ctx context.Context, client *github.Client,
+	owner, repo, branch, commitBranch string) (ref *github.Reference,
+	isNewBranch bool, err error) {
+
 	var baseRef *github.Reference
 	// if branch exists get back ref
 	if ref, _, err = client.Git.GetRef(ctx, owner, repo, "refs/heads/"+commitBranch); err == nil {
@@ -86,14 +93,18 @@ func getRef(ctx context.Context, client *github.Client, owner, repo, branch, com
 	return ref, true, err
 }
 
-func getTree(ctx context.Context, client *github.Client, owner, repo string, ref *github.Reference, filename, source string) (tree *github.Tree, err error) {
+func getTree(ctx context.Context, client *github.Client, owner, repo string,
+	ref *github.Reference, filename, source string) (tree *github.Tree, err error) {
+
 	entries := []*github.TreeEntry{}
 	entries = append(entries, &github.TreeEntry{Path: github.String(filename), Type: github.String("blob"), Content: github.String(source), Mode: github.String("100644")})
 	tree, _, err = client.Git.CreateTree(ctx, owner, repo, *ref.Object.SHA, entries)
 	return tree, err
 }
 
-func pushCommit(ctx context.Context, client *github.Client, owner, repo string, ref *github.Reference, tree *github.Tree, hugoVersion string) (err error) {
+func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
+	ref *github.Reference, tree *github.Tree, hugoVersion string) (err error) {
+
 	parent, _, err := client.Repositories.GetCommit(ctx, owner, repo, *ref.Object.SHA)
 	if err != nil {
 		return err
@@ -119,7 +130,9 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string, 
 	return err
 }
 
-func createPullRequest(ctx context.Context, client *github.Client, owner, repo, branch, hugoVersion, releaseURL, commitBranch string) error {
+func createPullRequest(ctx context.Context, client *github.Client,
+	owner, repo, branch, hugoVersion, releaseURL, commitBranch string) error {
+
 	prBranch := commitBranch
 	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
 	prDescription := fmt.Sprintf("%s\nMore details in %s", prSubject, releaseURL)
