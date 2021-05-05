@@ -5,12 +5,12 @@ import (
 	"testing"
 
 	"github.com/google/go-github/v35/github"
+	"github.com/hashicorp/go-version"
 )
 
-// Expecting test fail after new release (remove later)
 func TestGetCurrentHugoVersion(t *testing.T) {
 	t.Parallel()
-	expected := "0.83.1"
+	expected := "0.81.0"
 
 	var client *github.Client
 	var ctx = context.Background()
@@ -21,8 +21,10 @@ func TestGetCurrentHugoVersion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Get error %v", err)
 	}
-	if real != expected {
-		t.Errorf("Expected %v and real %v)", expected, real)
+	expectedVersion, _ := version.NewVersion(expected)
+	realVersion, _ := version.NewVersion(real)
+	if expectedVersion.GreaterThanOrEqual(realVersion) {
+		t.Errorf("Real version %v is greater than expected %v)", realVersion, expectedVersion)
 	}
 }
 
@@ -35,7 +37,7 @@ func TestGetCurrentDeployedVersion(t *testing.T) {
 
 	client = github.NewClient(nil)
 
-	real, _, err := getCurrentDeployedVersion(ctx, client, "abtris", "www.prskavec.net", "netlify.toml")
+	real, _, err := getCurrentDeployedVersion(ctx, client, "abtris", "12ApiaryTest", "netlify.toml", "master")
 	if err != nil {
 		t.Fatalf("Get error %v", err)
 	}

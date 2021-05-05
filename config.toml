@@ -6,10 +6,8 @@ source_repo_releases = "gohugoio/hugo"
 [[target_repos]]
   repo = "abtris/www.prskavec.net"
   target_file = "netlify.toml"
-  target_variable = "HUGO_VERSION"
   branch = "master"
 [[target_repos]]
   repo = "abtris/blog.prskavec.net-hugo"
   target_file = "netlify.toml"
-  target_variable = "HUGO_VERSION"
   branch = "master"
