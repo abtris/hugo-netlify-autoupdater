@@ -88,7 +88,10 @@ func getRef(ctx context.Context, client *github.Client,
 		return nil, false, err
 	}
 	// create new branch
-	newRef := &github.Reference{Ref: github.String("refs/heads/" + commitBranch), Object: &github.GitObject{SHA: baseRef.Object.SHA}}
+	newRef := &github.Reference{
+		Ref:    github.String("refs/heads/" + commitBranch),
+		Object: &github.GitObject{SHA: baseRef.Object.SHA},
+	}
 	ref, _, err = client.Git.CreateRef(ctx, owner, repo, newRef)
 	return ref, true, err
 }
@@ -97,7 +100,11 @@ func getTree(ctx context.Context, client *github.Client, owner, repo string,
 	ref *github.Reference, filename, source string) (tree *github.Tree, err error) {
 
 	entries := []*github.TreeEntry{}
-	entries = append(entries, &github.TreeEntry{Path: github.String(filename), Type: github.String("blob"), Content: github.String(source), Mode: github.String("100644")})
+	entries = append(entries, &github.TreeEntry{Path: github.String(filename),
+		Type:    github.String("blob"),
+		Content: github.String(source),
+		Mode:    github.String("100644"),
+	})
 	tree, _, err = client.Git.CreateTree(ctx, owner, repo, *ref.Object.SHA, entries)
 	return tree, err
 }
@@ -116,8 +123,17 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 	commiterEmail := "updater-bot@github.com"
 	// Create the commit using the tree.
 	date := time.Now()
-	author := &github.CommitAuthor{Date: &date, Name: &commiterName, Email: &commiterEmail}
-	commit := &github.Commit{Author: author, Message: &commitMessage, Tree: tree, Parents: []*github.Commit{parent.Commit}}
+	author := &github.CommitAuthor{
+		Date:  &date,
+		Name:  &commiterName,
+		Email: &commiterEmail,
+	}
+	commit := &github.Commit{
+		Author:  author,
+		Message: &commitMessage,
+		Tree:    tree,
+		Parents: []*github.Commit{parent.Commit},
+	}
 	newCommit, _, err := client.Git.CreateCommit(ctx, owner, repo, commit)
 	if err != nil {
 		return err
@@ -126,7 +142,6 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 	// Attach the commit to the master branch.
 	ref.Object.SHA = newCommit.SHA
 	_, _, err = client.Git.UpdateRef(ctx, owner, repo, ref, false)
-
 	return err
 }
 

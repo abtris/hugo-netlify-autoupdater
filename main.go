@@ -33,8 +33,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(hugoVersion)
-	fmt.Println(releaseURL)
 
 	for _, repository := range conf.TargetRepository {
 		// getCurrentDeployedVersion for all config.targetRepos (done)
