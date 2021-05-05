@@ -119,10 +119,10 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string, 
 	return err
 }
 
-func createPullRequest(ctx context.Context, client *github.Client, owner, repo, branch, hugoVersion, releaseUrl, commitBranch string) error {
+func createPullRequest(ctx context.Context, client *github.Client, owner, repo, branch, hugoVersion, releaseURL, commitBranch string) error {
 	prBranch := commitBranch
 	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
-	prDescription := fmt.Sprintf("%s\nMore details in %s", prSubject, releaseUrl)
+	prDescription := fmt.Sprintf("%s\nMore details in %s", prSubject, releaseURL)
 	baseBranch := branch
 	newPR := &github.NewPullRequest{
 		Title:               &prSubject,

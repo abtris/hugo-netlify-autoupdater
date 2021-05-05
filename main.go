@@ -29,12 +29,12 @@ func main() {
 	tc := oauth2.NewClient(ctx, ts)
 	client = github.NewClient(tc)
 	// getCurrentHugoVersion
-	hugoVersion, releaseUrl, err := getCurrentHugoVersion(ctx, client)
+	hugoVersion, releaseURL, err := getCurrentHugoVersion(ctx, client)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(hugoVersion)
-	fmt.Println(releaseUrl)
+	fmt.Println(releaseURL)
 
 	for _, repository := range conf.TargetRepository {
 		// getCurrentDeployedVersion for all config.targetRepos (done)
@@ -60,7 +60,7 @@ func main() {
 				if errCommit != nil {
 					log.Fatalf("Error in pushCommit %v", errCommit)
 				}
-				errPR := createPullRequest(ctx, client, owner, repo, repository.Branch, hugoVersion, releaseUrl, commitBranch)
+				errPR := createPullRequest(ctx, client, owner, repo, repository.Branch, hugoVersion, releaseURL, commitBranch)
 				if errPR != nil {
 					log.Fatalf("Error in createPullRequest %v", errPR)
 				}
