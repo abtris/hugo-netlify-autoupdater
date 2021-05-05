@@ -3,7 +3,7 @@ on:
   schedule:
     - cron: "0 14 * * 1"
 jobs:
-  issue:
+  updater:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,3 +17,12 @@ jobs:
         run: make run
         env:
           GITHUB_TOKEN: ${{ secrets.AUTOUPDATER_TOKEN }}
+  slackNotification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
