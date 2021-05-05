@@ -13,6 +13,10 @@
 - [toml library](https://github.com/BurntSushi/toml)
 - [go-version](https://github.com/hashicorp/go-version)
 
+### GITHUB_TOKEN
+
+- as `GITHUB_TOKEN` you need [personal one](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) that have scope `repo` for all your repositories that you want create PR's. Default in Github Action have access only to current repo.
+
 ## Install
 
 ```sh
