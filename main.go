@@ -20,9 +20,9 @@ func main() {
 	// getConfig
 	conf, err := parseConfigFile("config.toml")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Missing or wrong config.toml - %v", err)
 	}
-	fmt.Printf("Source repo: %s", conf.SourceRepoReleases)
+	log.Printf("Source repo: %s\n", conf.SourceRepoReleases)
 	// github client
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -39,7 +39,7 @@ func main() {
 		owner, repo := getRepoPath(repository.Repo)
 		deployVersion, deployContent, err := getCurrentDeployedVersion(ctx, client, owner, repo, repository.TargetFile, repository.Branch)
 		if err != nil {
-			fmt.Printf("Error in %v", err)
+			log.Fatalf("Error in getCurrentDeployedVersion - %v", err)
 		}
 		if isNewVersion(hugoVersion, deployVersion) {
 			updatedContent := updateVersion(hugoVersion, deployContent)
@@ -63,10 +63,10 @@ func main() {
 					log.Fatalf("Error in createPullRequest %v", errPR)
 				}
 			} else {
-				fmt.Printf("PR branch (%s) already exists.\n", commitBranch)
+				log.Printf("PR branch (%s) already exists.\n", commitBranch)
 			}
 		} else {
-			fmt.Printf("No new version in %s/%s (current: %s)\n", owner, repo, deployVersion)
+			log.Printf("No new version in %s/%s (current: %s)\n", owner, repo, deployVersion)
 		}
 	}
 }
