@@ -17,7 +17,7 @@ jobs:
         run: make run
         env:
           GITHUB_TOKEN: ${{ secrets.AUTOUPDATER_TOKEN }}
-  slackNotification:
+  slackNotification: # https://github.com/marketplace/actions/slack-notify
     name: Slack Notification
     runs-on: ubuntu-latest
     steps:
