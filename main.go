@@ -29,7 +29,8 @@ func main() {
 	tc := oauth2.NewClient(ctx, ts)
 	client = github.NewClient(tc)
 	// getCurrentHugoVersion
-	hugoVersion, releaseURL, err := getCurrentHugoVersion(ctx, client)
+	sourceOwner, sourceRepo := getRepoPath(conf.SourceRepoReleases)
+	hugoVersion, releaseURL, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
 	if err != nil {
 		log.Fatal(err)
 	}

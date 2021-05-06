@@ -29,8 +29,8 @@ func isNewVersion(hugoVersion string, netlifyConfigVersion string) bool {
 	return false
 }
 
-func getCurrentHugoVersion(ctx context.Context, client *github.Client) (string, string, error) {
-	release, _, err := client.Repositories.GetLatestRelease(ctx, "gohugoio", "hugo")
+func getCurrentHugoVersion(ctx context.Context, client *github.Client, owner, repo string) (string, string, error) {
+	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
 	if err != nil {
 		log.Printf("Get latest release error %v", err)
 	}
