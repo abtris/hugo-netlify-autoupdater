@@ -14,10 +14,12 @@ func TestGetCurrentHugoVersion(t *testing.T) {
 
 	var client *github.Client
 	var ctx = context.Background()
-
+	// for public repo, you don't need credentials
 	client = github.NewClient(nil)
-
-	real, _, err := getCurrentHugoVersion(ctx, client)
+	// public repo as source
+	sourceOwner := "gohugoio"
+	sourceRepo := "hugo"
+	real, _, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
 	if err != nil {
 		t.Fatalf("Get error %v", err)
 	}
