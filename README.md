@@ -44,6 +44,10 @@ source_repo_releases = "gohugoio/hugo"
 make run
 ```
 
+## How that works
+
+![](./doc/whiteboard.png)
+
 ## License
 
 MIT
