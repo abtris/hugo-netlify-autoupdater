@@ -1,11 +1,10 @@
 [![Build Status](https://github.com/abtris/hugo-netlify-autoupdater/actions/workflows/go.yaml/badge.svg)](https://github.com/abtris/hugo-netlify-autoupdater/actions)
 # Hugo Netlify Autoupdater
 
-- [x] cron for run
-- [x] compare current deployed version of Hugo in all blogs
-- [x] create PR's for update version
-- [ ] merge if all passed
-- [ ] more settings move into config file
+- using cron for run [.github/workflows/scheduler.yml](https://github.com/abtris/hugo-netlify-autoupdater/blob/master/.github/workflows/scheduler.yml#L4)
+- compare current deployed version of Hugo in all blogs
+- create PR's for update version `netlify.toml` config
+- available settings are in `config.toml` - source repository, target repositories and branch
 
 ## Dependencies
 
