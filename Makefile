@@ -12,5 +12,8 @@ help:  ## Display this help
 run: ## Run
 	go run main.go github.go toml.go
 
+test: ## Run tests
+	go test -v ./...
+
 build: ## BuildEnv
 	go build

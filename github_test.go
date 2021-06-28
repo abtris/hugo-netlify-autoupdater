@@ -19,7 +19,7 @@ func TestGetCurrentHugoVersion(t *testing.T) {
 	// public repo as source
 	sourceOwner := "gohugoio"
 	sourceRepo := "hugo"
-	real, _, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
+	real, _, _, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
 	if err != nil {
 		t.Fatalf("Get error %v", err)
 	}
