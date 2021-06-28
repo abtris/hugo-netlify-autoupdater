@@ -30,7 +30,7 @@ func main() {
 	client = github.NewClient(tc)
 	// getCurrentHugoVersion
 	sourceOwner, sourceRepo := getRepoPath(conf.SourceRepoReleases)
-	hugoVersion, releaseURL, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
+	hugoVersion, releaseURL, releaseInfo, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func main() {
 				if errCommit != nil {
 					log.Fatalf("Error in pushCommit %v", errCommit)
 				}
-				errPR := createPullRequest(ctx, client, owner, repo, repository.Branch, hugoVersion, releaseURL, commitBranch)
+				errPR := createPullRequest(ctx, client, owner, repo, repository.Branch, hugoVersion, releaseURL, releaseInfo, commitBranch)
 				if errPR != nil {
 					log.Fatalf("Error in createPullRequest %v", errPR)
 				}

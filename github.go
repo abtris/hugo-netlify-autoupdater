@@ -29,13 +29,14 @@ func isNewVersion(hugoVersion string, netlifyConfigVersion string) bool {
 	return false
 }
 
-func getCurrentHugoVersion(ctx context.Context, client *github.Client, owner, repo string) (string, string, error) {
+func getCurrentHugoVersion(ctx context.Context, client *github.Client, owner, repo string) (string, string, string, error) {
 	release, _, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
 	if err != nil {
 		log.Printf("Get latest release error %v", err)
-		return "", "", err
+		return "", "", "", err
 	}
-	return strings.TrimPrefix(release.GetTagName(), "v"), release.GetHTMLURL(), nil
+
+	return strings.TrimPrefix(release.GetTagName(), "v"), release.GetHTMLURL(), release.GetBody(), nil
 }
 
 func getCurrentDeployedFile(ctx context.Context, client *github.Client,
@@ -147,11 +148,11 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 }
 
 func createPullRequest(ctx context.Context, client *github.Client,
-	owner, repo, branch, hugoVersion, releaseURL, commitBranch string) error {
+	owner, repo, branch, hugoVersion, releaseURL, releaseInfo, commitBranch string) error {
 
 	prBranch := commitBranch
 	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
-	prDescription := fmt.Sprintf("%s\nMore details in %s", prSubject, releaseURL)
+	prDescription := fmt.Sprintf("%s\nMore details in %s\n\n%s", prSubject, releaseURL, releaseInfo)
 	baseBranch := branch
 	newPR := &github.NewPullRequest{
 		Title:               &prSubject,
