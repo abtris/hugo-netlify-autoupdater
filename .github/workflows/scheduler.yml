@@ -17,6 +17,17 @@ jobs:
         run: make run
         env:
           GITHUB_TOKEN: ${{ secrets.AUTOUPDATER_TOKEN }}
+
+      - name: Print outputs
+        id: version-update
+        run: |
+          echo "${{ env.action_version }}"
+
+      - name: Print outputs
+        id: version-update-sucess
+        run: |
+          echo "${{ env.action_current_version }}"
+
   slackNotification: # https://github.com/marketplace/actions/slack-notify
     name: Slack Notification
     runs-on: ubuntu-latest
@@ -27,3 +38,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: "Weekly Release Check"
+          SLACK_MESSAGE: "Version ${{ env.action_version }} :rocket:"
