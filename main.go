@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -42,13 +43,17 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error in getCurrentDeployedVersion - %v", err)
 		}
+		messageHugoVersion := []byte(hugoVersion)
+		errHugo := ioutil.WriteFile(".hugo-version", messageHugoVersion, 0644)
+		if errHugo != nil {
+			log.Fatal(err)
+		}
+		messageDeployVersion := []byte(deployVersion)
+		errDeployed := ioutil.WriteFile(".deployed-version", messageDeployVersion, 0644)
+		if errDeployed != nil {
+			log.Fatal(err)
+		}
 		if isNewVersion(hugoVersion, deployVersion) {
-			githubEnv := os.Getenv("GITHUB_ENV")
-			if len(githubEnv) > 0 {
-				os.Setenv("GITHUB_ENV", fmt.Sprintf("%s\naction_version=%s\naction_current_version=%s", githubEnv, hugoVersion, deployVersion))
-			} else {
-				os.Setenv("GITHUB_ENV", fmt.Sprintf("action_version=%s\naction_current_version=%s", hugoVersion, deployVersion))
-			}
 			updatedContent := updateVersion(hugoVersion, deployContent)
 			fmt.Println(updatedContent)
 			commitBranch := getCommitBranch(hugoVersion)
@@ -74,12 +79,6 @@ func main() {
 			}
 		} else {
 			log.Printf("No new version in %s/%s (current: %s)\n", owner, repo, deployVersion)
-			githubEnv := os.Getenv("GITHUB_ENV")
-			if len(githubEnv) > 0 {
-				os.Setenv("GITHUB_ENV", fmt.Sprintf("%saction_version=%s", githubEnv, deployVersion))
-			} else {
-				os.Setenv("GITHUB_ENV", fmt.Sprintf("action_version=%s", deployVersion))
-			}
 		}
 	}
 }

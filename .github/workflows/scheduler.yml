@@ -22,12 +22,14 @@ jobs:
       - name: Print outputs
         id: version-update
         run: |
-          echo "${{ env.action_version }}"
+          VERSION=`cat .deployed-version`
+          echo "deployed_version=$VERSION" >> $GITHUB_ENV
 
       - name: Print outputs
-        id: version-update-sucess
+        id: version-update-success
         run: |
-          echo "${{ env.action_current_version }}"
+          VERSION=`cat .hugo-version`
+          echo "hugo_version=$VERSION" >> $GITHUB_ENV
 
   slackNotification: # https://github.com/marketplace/actions/slack-notify
     name: Slack Notification
@@ -39,4 +41,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: "Weekly Release Check"
-          SLACK_MESSAGE: "Version ${{ env.action_version }} :rocket:"
+          SLACK_MESSAGE: "Version ${{env.deployed_version}} / ${{ env.hugo_version }} :rocket:"
