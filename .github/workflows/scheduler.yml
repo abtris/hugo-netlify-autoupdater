@@ -31,6 +31,10 @@ jobs:
           VERSION=`cat .hugo-version`
           echo "hugo_version=$VERSION" >> $GITHUB_ENV
 
+      - name: Test outputs
+        run: |
+          echo "Version ${{env.deployed_version}} / ${{ env.hugo_version }}"
+
   slackNotification: # https://github.com/marketplace/actions/slack-notify
     name: Slack Notification
     runs-on: ubuntu-latest
