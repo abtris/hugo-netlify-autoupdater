@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2 # This hack default 1.15 version
         with:
-          go-version: 1.16
+          go-version: 1.17
       - uses: reviewdog/action-staticcheck@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
