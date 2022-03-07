@@ -45,7 +45,23 @@ make run
 
 ## How that works
 
-![](./doc/whiteboard.png)
+```mermaid
+sequenceDiagram
+    autonumber
+loop Every week           
+    Scheduler (GitHub Actions)->>Hugo repository: Do you have a new release?
+    Hugo repository-->>Scheduler (GitHub Actions): Yes, I have a new $HUGO_VERSION!
+opt Fail response
+    Hugo repository-->>Scheduler (GitHub Actions): No.
+end        
+    Scheduler (GitHub Actions)->>Blog repositories: Is this $HUGO_VERSION newer than your Hugo version?    
+    Blog repositories-->>Scheduler (GitHub Actions): Yes, I have old version.
+opt Fail response
+    Blog repositories-->>Scheduler (GitHub Actions): No, I already have this version.
+end    
+    Scheduler (GitHub Actions)->>Blog repositories: I will create PR with update to you!
+end    
+```
 
 ## License
 
