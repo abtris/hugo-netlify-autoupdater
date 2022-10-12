@@ -1,6 +1,5 @@
 name: Weekly Release Check
 on:
-  push:
   schedule:
     - cron: "0 14 * * 1"
 jobs:
