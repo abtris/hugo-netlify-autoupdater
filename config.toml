@@ -11,3 +11,7 @@ source_repo_releases = "gohugoio/hugo"
   repo = "abtris/blog.prskavec.net-hugo"
   target_file = "netlify.toml"
   branch = "master"
+[[target_repos]]
+  repo = "abtris/gomeetupprague-website"
+  target_file = "netlify.toml"
+  branch = "main"
