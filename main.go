@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -44,12 +43,12 @@ func main() {
 			log.Fatalf("Error in getCurrentDeployedVersion - %v", err)
 		}
 		messageHugoVersion := []byte(hugoVersion)
-		errHugo := ioutil.WriteFile(".hugo-version", messageHugoVersion, 0644)
+		errHugo := os.WriteFile(".hugo-version", messageHugoVersion, 0644)
 		if errHugo != nil {
 			log.Fatal(err)
 		}
 		messageDeployVersion := []byte(deployVersion)
-		errDeployed := ioutil.WriteFile(".deployed-version", messageDeployVersion, 0644)
+		errDeployed := os.WriteFile(".deployed-version", messageDeployVersion, 0644)
 		if errDeployed != nil {
 			log.Fatal(err)
 		}
