@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/google/go-github/v35 v35.3.0
+	github.com/google/go-github/v49 v49.1.0
 	github.com/hashicorp/go-version v1.6.0
 	golang.org/x/oauth2 v0.3.0
 )
