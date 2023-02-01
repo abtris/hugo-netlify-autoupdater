@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v35/github"
+	"github.com/google/go-github/v50/github"
 	"github.com/hashicorp/go-version"
 )
 
@@ -114,7 +114,7 @@ func getTree(ctx context.Context, client *github.Client, owner, repo string,
 func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 	ref *github.Reference, tree *github.Tree, hugoVersion string) (err error) {
 
-	parent, _, err := client.Repositories.GetCommit(ctx, owner, repo, *ref.Object.SHA)
+	parent, _, err := client.Repositories.GetCommit(ctx, owner, repo, *ref.Object.SHA, &github.ListOptions{})
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 	// Create the commit using the tree.
 	date := time.Now()
 	author := &github.CommitAuthor{
-		Date:  &date,
+		Date:  &github.Timestamp{date},
 		Name:  &commiterName,
 		Email: &commiterEmail,
 	}
