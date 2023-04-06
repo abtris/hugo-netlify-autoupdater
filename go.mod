@@ -1,10 +1,9 @@
 module github.com/abtris/hugo-netlify-autoupdater
 
-go 1.19
+go 1.20
 
 require (
 	github.com/BurntSushi/toml v1.2.1
-	github.com/google/go-github/v50 v50.2.0
 	github.com/google/go-github/v51 v51.0.0
 	github.com/hashicorp/go-version v1.6.0
 	golang.org/x/oauth2 v0.6.0
