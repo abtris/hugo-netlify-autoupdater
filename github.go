@@ -136,7 +136,8 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 		Tree:    tree,
 		Parents: []*github.Commit{parent.Commit},
 	}
-	newCommit, _, err := client.Git.CreateCommit(ctx, owner, repo, commit)
+	opts := &github.CreateCommitOptions{}
+	newCommit, _, err := client.Git.CreateCommit(ctx, owner, repo, commit, opts)
 	if err != nil {
 		return err
 	}
