@@ -2,7 +2,7 @@ module github.com/abtris/hugo-netlify-autoupdater
 
 go 1.21
 
-toolchain go1.22.3
+toolchain go1.22.4
 
 require (
 	github.com/BurntSushi/toml v1.4.0
