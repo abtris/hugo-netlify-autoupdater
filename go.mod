@@ -6,7 +6,7 @@ toolchain go1.23.2
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/google/go-github/v65 v65.0.0
+	github.com/google/go-github/v66 v66.0.0
 	github.com/hashicorp/go-version v1.7.0
 	golang.org/x/oauth2 v0.23.0
 )
