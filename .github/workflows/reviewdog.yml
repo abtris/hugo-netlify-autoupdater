@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.3.0
-      - uses: actions/setup-go@v5.4.0
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: "go.mod"
       - uses: reviewdog/action-staticcheck@v1
