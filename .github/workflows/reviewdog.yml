@@ -20,7 +20,7 @@ jobs:
       - uses: reviewdog/action-golangci-lint@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          golangci_lint_flags: "--enable-all --exclude-use-default=false"
+          golangci_lint_flags: "--exclude-use-default=false"
           level: "warning"
           reporter: github-pr-review
 
