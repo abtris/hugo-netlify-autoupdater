@@ -11,18 +11,6 @@ jobs:
       - uses: reviewdog/action-suggester@v1
         with:
           tool_name: gofmt
-  golangci-lint:
-    if: github.event_name == 'pull_request'
-    name: runner / golangci-lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5.0.0
-      - uses: reviewdog/action-golangci-lint@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          level: "warning"
-          reporter: github-pr-review
-
   staticcheck:
     if: github.event_name == 'pull_request'
     name: runner / staticcheck
