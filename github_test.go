@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v80/github"
 	"github.com/hashicorp/go-version"
 )
 
