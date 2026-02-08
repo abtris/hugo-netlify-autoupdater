@@ -90,9 +90,9 @@ func getRef(ctx context.Context, client *github.Client,
 		return nil, false, err
 	}
 	// create new branch
-	newRef := &github.Reference{
-		Ref:    github.String("refs/heads/" + commitBranch),
-		Object: &github.GitObject{SHA: baseRef.Object.SHA},
+	newRef := github.CreateRef{
+		Ref: "refs/heads/" + commitBranch,
+		SHA: baseRef.GetObject().GetSHA(),
 	}
 	ref, _, err = client.Git.CreateRef(ctx, owner, repo, newRef)
 	return ref, true, err
@@ -130,7 +130,7 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 		Name:  &commiterName,
 		Email: &commiterEmail,
 	}
-	commit := &github.Commit{
+	commit := github.Commit{
 		Author:  author,
 		Message: &commitMessage,
 		Tree:    tree,
@@ -144,7 +144,10 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 
 	// Attach the commit to the master branch.
 	ref.Object.SHA = newCommit.SHA
-	_, _, err = client.Git.UpdateRef(ctx, owner, repo, ref, false)
+	_, _, err = client.Git.UpdateRef(ctx, owner, repo, ref.GetRef(), github.UpdateRef{
+		SHA:   newCommit.GetSHA(),
+		Force: github.Bool(false),
+	})
 	return err
 }
 
