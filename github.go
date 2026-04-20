@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v83/github"
+	"github.com/google/go-github/v85/github"
 	"github.com/hashicorp/go-version"
 )
 
