@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/google/go-github/v89/github"
-	"golang.org/x/oauth2"
 )
 
 var client *github.Client
@@ -25,9 +24,10 @@ func main() {
 	log.Printf("Source repo: %s\n", conf.SourceRepoReleases)
 	// github client
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(ctx, ts)
-	client = github.NewClient(tc)
+	client, err = github.NewClient(github.WithAuthToken(token))
+	if err != nil {
+		log.Fatalf("Error in github.NewClient - %v", err)
+	}
 	// getCurrentHugoVersion
 	sourceOwner, sourceRepo := getRepoPath(conf.SourceRepoReleases)
 	hugoVersion, releaseURL, releaseInfo, err := getCurrentHugoVersion(ctx, client, sourceOwner, sourceRepo)
