@@ -2,22 +2,35 @@ package main
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/google/go-github/v89/github"
 	"github.com/hashicorp/go-version"
 )
 
+// newTestClient returns a client authenticated with GITHUB_TOKEN when it is
+// set, to avoid the 60 requests/hour unauthenticated rate limit. For public
+// repos the unauthenticated client works too, just with the lower limit.
+func newTestClient(t *testing.T) *github.Client {
+	t.Helper()
+	var opts []github.ClientOptionsFunc
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+		opts = append(opts, github.WithAuthToken(token))
+	}
+	client, err := github.NewClient(opts...)
+	if err != nil {
+		t.Fatalf("Get error %v", err)
+	}
+	return client
+}
+
 func TestGetCurrentHugoVersion(t *testing.T) {
 	t.Parallel()
 	expected := "0.81.0"
 
 	var ctx = context.Background()
-	// for public repo, you don't need credentials
-	client, err := github.NewClient()
-	if err != nil {
-		t.Fatalf("Get error %v", err)
-	}
+	client := newTestClient(t)
 	// public repo as source
 	sourceOwner := "gohugoio"
 	sourceRepo := "hugo"
@@ -37,11 +50,7 @@ func TestGetCurrentDeployedVersion(t *testing.T) {
 	expected := "0.83.1"
 
 	var ctx = context.Background()
-
-	client, err := github.NewClient()
-	if err != nil {
-		t.Fatalf("Get error %v", err)
-	}
+	client := newTestClient(t)
 
 	real, _, err := getCurrentDeployedVersion(ctx, client, "abtris", "12ApiaryTest", "netlify.toml", "master")
 	if err != nil {
