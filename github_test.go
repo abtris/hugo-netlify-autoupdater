@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/go-github/v83/github"
+	"github.com/google/go-github/v89/github"
 	"github.com/hashicorp/go-version"
 )
 
@@ -12,10 +12,12 @@ func TestGetCurrentHugoVersion(t *testing.T) {
 	t.Parallel()
 	expected := "0.81.0"
 
-	var client *github.Client
 	var ctx = context.Background()
 	// for public repo, you don't need credentials
-	client = github.NewClient(nil)
+	client, err := github.NewClient()
+	if err != nil {
+		t.Fatalf("Get error %v", err)
+	}
 	// public repo as source
 	sourceOwner := "gohugoio"
 	sourceRepo := "hugo"
@@ -34,10 +36,12 @@ func TestGetCurrentDeployedVersion(t *testing.T) {
 	t.Parallel()
 	expected := "0.83.1"
 
-	var client *github.Client
 	var ctx = context.Background()
 
-	client = github.NewClient(nil)
+	client, err := github.NewClient()
+	if err != nil {
+		t.Fatalf("Get error %v", err)
+	}
 
 	real, _, err := getCurrentDeployedVersion(ctx, client, "abtris", "12ApiaryTest", "netlify.toml", "master")
 	if err != nil {
