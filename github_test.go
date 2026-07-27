@@ -84,6 +84,50 @@ func TestIsNewVersion(t *testing.T) {
 	}
 }
 
+func TestSanitizeMentions(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{name: "Empty", input: "", expected: ""},
+		{name: "StartOfText", input: "@bep fixed it", expected: "bep fixed it"},
+		{name: "StartOfLine", input: "notes\n@bep fixed it", expected: "notes\nbep fixed it"},
+		{name: "InSentence", input: "Thanks to @jmooring for the fix", expected: "Thanks to jmooring for the fix"},
+		{name: "MultipleMentions", input: "@bep @jmooring", expected: "bep jmooring"},
+		{name: "MarkdownLink", input: "[@bep](https://github.com/bep)", expected: "[bep](https://github.com/bep)"},
+		{name: "InParens", input: "(@bep)", expected: "(bep)"},
+		{name: "Emphasized", input: "*@bep*", expected: "*bep*"},
+		{name: "Team", input: "cc @gohugoio/maintainers here", expected: "cc gohugoio/maintainers here"},
+		{name: "DashedHandle", input: "by @some-user today", expected: "by some-user today"},
+		{name: "Email", input: "updater-bot@github.com", expected: "updater-bot@github.com"},
+		{name: "URLPath", input: "https://example.com/@bep", expected: "https://example.com/@bep"},
+		{name: "NoMention", input: "Update Hugo to version 0.150.0", expected: "Update Hugo to version 0.150.0"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			result := sanitizeMentions(test.input)
+			if result != test.expected {
+				t.Errorf("Expected %q and real %q)", test.expected, result)
+			}
+		})
+	}
+}
+
+func TestGetPullRequestBody(t *testing.T) {
+	t.Parallel()
+	expected := "[hugo-updater] Update Hugo to version 0.150.0\nMore details in https://github.com/gohugoio/hugo/releases/tag/v0.150.0\n\nThanks to bep for the fix"
+	body := getPullRequestBody(
+		"[hugo-updater] Update Hugo to version 0.150.0",
+		"https://github.com/gohugoio/hugo/releases/tag/v0.150.0",
+		"Thanks to @bep for the fix",
+	)
+	if body != expected {
+		t.Errorf("Expected %q and real %q)", expected, body)
+	}
+}
+
 func TestGetRepoPath(t *testing.T) {
 	t.Parallel()
 	input := "owner/repo"

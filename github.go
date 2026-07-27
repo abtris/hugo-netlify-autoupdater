@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -151,14 +152,26 @@ func pushCommit(ctx context.Context, client *github.Client, owner, repo string,
 	return err
 }
 
+// mentionRegexp matches a GitHub @mention (user or org/team) at the start of a
+// word, so email addresses like updater-bot@github.com are left alone.
+var mentionRegexp = regexp.MustCompile(`(^|[\s(\[{*_~"'])@([A-Za-z0-9][A-Za-z0-9-]*(?:/[A-Za-z0-9._-]+)?)`)
+
+// sanitizeMentions drops the @ from mentions so that copying release notes into
+// a PR description does not notify everyone mentioned there (issue#87).
+func sanitizeMentions(text string) string {
+	return mentionRegexp.ReplaceAllString(text, "${1}${2}")
+}
+
+func getPullRequestBody(prSubject, releaseURL, releaseInfo string) string {
+	return fmt.Sprintf("%s\nMore details in %s\n\n%s", prSubject, releaseURL, sanitizeMentions(releaseInfo))
+}
+
 func createPullRequest(ctx context.Context, client *github.Client,
-	// releaseInfo removed issue#87
-	owner, repo, branch, hugoVersion, releaseURL, _, commitBranch string) error {
+	owner, repo, branch, hugoVersion, releaseURL, releaseInfo, commitBranch string) error {
 
 	prBranch := commitBranch
 	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
-	// releaseInfo removed issue#87
-	prDescription := fmt.Sprintf("%s\nMore details in %s\n\n%s", prSubject, releaseURL, "")
+	prDescription := getPullRequestBody(prSubject, releaseURL, releaseInfo)
 	baseBranch := branch
 	newPR := &github.NewPullRequest{
 		Title:               &prSubject,
