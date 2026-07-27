@@ -15,3 +15,5 @@ jobs:
 
       - name: Test
         run: go test -v ./...
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
