@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v89/github"
+	"github.com/google/go-github/v90/github"
 	"github.com/hashicorp/go-version"
 )
 
@@ -173,10 +173,10 @@ func createPullRequest(ctx context.Context, client *github.Client,
 	prSubject := fmt.Sprintf("[hugo-updater] Update Hugo to version %s", hugoVersion)
 	prDescription := getPullRequestBody(prSubject, releaseURL, releaseInfo)
 	baseBranch := branch
-	newPR := &github.NewPullRequest{
+	newPR := github.CreatePullRequest{
 		Title:               &prSubject,
-		Head:                &prBranch,
-		Base:                &baseBranch,
+		Head:                prBranch,
+		Base:                baseBranch,
 		Body:                &prDescription,
 		MaintainerCanModify: github.Bool(true),
 	}
